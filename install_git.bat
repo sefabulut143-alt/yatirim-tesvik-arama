@@ -60,3 +60,4 @@ echo.
 echo Repo olusturulduktan sonra Railway'de deploy edebilirsiniz.
 echo.
 pause
+

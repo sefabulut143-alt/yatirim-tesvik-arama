@@ -128,3 +128,4 @@ docker run -p 5000:5000 ytb-arama
 ---
 
 **Not**: Bu uygulama orijinal desktop uygulamasının modern web versiyonudur. Aynı veri setini kullanır ancak mobil cihazlar için optimize edilmiştir.
+

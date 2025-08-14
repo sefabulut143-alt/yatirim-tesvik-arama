@@ -184,3 +184,4 @@ Cloud deployment ile:
 ---
 
 **Not**: Cloud deployment, lokal çalıştırmanın tüm sorunlarını çözer ve uygulamanızı profesyonel hale getirir!
+

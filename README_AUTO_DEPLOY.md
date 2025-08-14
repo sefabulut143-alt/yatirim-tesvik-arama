@@ -122,3 +122,4 @@ Bu script otomatik olarak:
 Sadece `one_click_deploy.bat` dosyasını çalıştırın ve her şey otomatik olarak tamamlanacak!
 
 **Not**: Siz sadece siteye girip kullanacaksınız. Tüm teknik işlemler otomatik olarak yapılacak.
+

@@ -22,3 +22,4 @@ ngrok http 5000
 echo.
 echo 🛑 Tünel kapatildi.
 pause
+

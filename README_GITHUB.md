@@ -132,3 +132,4 @@ GitHub repo oluşturduktan sonra:
 - **Bilgisayarınızı kapatabileceksiniz**
 
 **Not**: `github_setup.bat` dosyasını çalıştırarak otomatik olarak GitHub repo oluşturabilirsiniz.
+

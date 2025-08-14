@@ -60,9 +60,36 @@
             border-radius: 8px;
             font-weight: bold;
         }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Veriler Yükleniyor</h3>
+            <p class="text-gray-600">105,778 adet yatırım teşvik belgesi yükleniyor...</p>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="search-container text-white py-8">
         <div class="container mx-auto px-4">
@@ -95,17 +122,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-building text-3xl text-blue-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalCompanies">15</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCompanies">105,778+</h3>
                 <p class="text-gray-600">Firma</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-map-marker-alt text-3xl text-green-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalCities">12</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCities">82</h3>
                 <p class="text-gray-600">İl</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-industry text-3xl text-purple-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalSectors">13</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalSectors">547</h3>
                 <p class="text-gray-600">Sektör</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
@@ -149,257 +176,19 @@
         </div>
     </footer>
 
+    <!-- Tüm firmaları yükle -->
+    <script src="all_companies.js"></script>
+    
     <script>
-        // Tüm firmalar (doğrudan HTML'de)
-        const allData = [
-            {
-                belge_no: "93898",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-03",
-                belge_bitis_tarihi: "2011-06-29",
-                yatirim_yeri: "İSTANBUL",
-                yatirim_ilce: "Esenyurt",
-                firma_adi: "METRICA METAL VE ELEKTRİK TEKNOLOJİLERİ SAN. TİC. A.Ş.",
-                yatirim_sektoru: "İMALAT - Madeni Eşya",
-                yatirim_cinsi: "TEVSİ, NAKİL, FİNANSAL KİRALAMA",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1,028,036 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93897",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-03",
-                belge_bitis_tarihi: "2011-02-01",
-                yatirim_yeri: "BURSA",
-                yatirim_ilce: "Osmangazi",
-                firma_adi: "ADAL TEKSTİL KONFEKSİYON SAN. VE TİC. LTD. ŞTİ.",
-                yatirim_sektoru: "İMALAT - Dokuma ve Giyim",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1,744,527 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93908",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-04",
-                belge_bitis_tarihi: "2011-07-08",
-                yatirim_yeri: "IĞDIR",
-                yatirim_ilce: "Merkez",
-                firma_adi: "ARAS OTOMOTİV ANTREPOCULUK LOJİSTİK DEPOLAMA PETROL VE MADEN İŞLETMECİLİĞİ TİC. LTD. ŞTİ.",
-                yatirim_sektoru: "İMALAT - Lastik-Plastik",
-                yatirim_cinsi: "KOMPLE YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "-",
-                vergi_indirimi: "Faiz Desteği",
-                sabit_yatirim_tutari: "506,034 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93909",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-05",
-                belge_bitis_tarihi: "2011-08-05",
-                yatirim_yeri: "ANKARA",
-                yatirim_ilce: "Çankaya",
-                firma_adi: "BERAT TEKNOLOJİ VE YAZILIM A.Ş.",
-                yatirim_sektoru: "İMALAT - Yazılım",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "4,500,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93910",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-06",
-                belge_bitis_tarihi: "2011-08-06",
-                yatirim_yeri: "ANKARA",
-                yatirim_ilce: "Keçiören",
-                firma_adi: "BERAT ENERJİ SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Enerji",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "2,800,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93911",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-07",
-                belge_bitis_tarihi: "2011-08-07",
-                yatirim_yeri: "İZMİR",
-                yatirim_ilce: "Konak",
-                firma_adi: "XYZ GIDA SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Gıda",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1,750,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93912",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-08",
-                belge_bitis_tarihi: "2011-08-08",
-                yatirim_yeri: "BURSA",
-                yatirim_ilce: "Nilüfer",
-                firma_adi: "DEF OTOMOTİV YAN SANAYİ A.Ş.",
-                yatirim_sektoru: "İMALAT - Otomotiv",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "3,200,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93913",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-09",
-                belge_bitis_tarihi: "2011-08-09",
-                yatirim_yeri: "ADANA",
-                yatirim_ilce: "Seyhan",
-                firma_adi: "GHI TEKSTİL SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Tekstil",
-                yatirim_cinsi: "TEVSİ, NAKİL",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1,850,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93914",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-10",
-                belge_bitis_tarihi: "2011-08-10",
-                yatirim_yeri: "KOCAELİ",
-                yatirim_ilce: "İzmit",
-                firma_adi: "JKL KİMYA SANAYİ VE TİCARET A.Ş.",
-                yatirim_sektoru: "İMALAT - Kimya",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "5,200,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93915",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-11",
-                belge_bitis_tarihi: "2011-08-11",
-                yatirim_yeri: "ANTALYA",
-                yatirim_ilce: "Muratpaşa",
-                firma_adi: "MNO PLASTİK SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Plastik",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "2,100,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93916",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-12",
-                belge_bitis_tarihi: "2011-08-12",
-                yatirim_yeri: "GAZİANTEP",
-                yatirim_ilce: "Şehitkamil",
-                firma_adi: "PQR METAL SANAYİ VE TİCARET A.Ş.",
-                yatirim_sektoru: "İMALAT - Metal",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "6,800,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93917",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-13",
-                belge_bitis_tarihi: "2011-08-13",
-                yatirim_yeri: "KONYA",
-                yatirim_ilce: "Selçuklu",
-                firma_adi: "STU MAKİNE SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Makine",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "3,500,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93918",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-14",
-                belge_bitis_tarihi: "2011-08-14",
-                yatirim_yeri: "MERSİN",
-                yatirim_ilce: "Yenişehir",
-                firma_adi: "VWX LOJİSTİK VE DEPOLAMA A.Ş.",
-                yatirim_sektoru: "HİZMETLER - Lojistik",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "4,200,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93919",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-15",
-                belge_bitis_tarihi: "2011-08-15",
-                yatirim_yeri: "SAMSUN",
-                yatirim_ilce: "İlkadım",
-                firma_adi: "YZA ELEKTRONİK SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                yatirim_sektoru: "İMALAT - Elektronik",
-                yatirim_cinsi: "TEVSİ",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "2,900,000 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                belge_no: "93920",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "2009-08-16",
-                belge_bitis_tarihi: "2011-08-16",
-                yatirim_yeri: "ESKİŞEHİR",
-                yatirim_ilce: "Tepebaşı",
-                firma_adi: "BCD İNŞAAT VE YAPI MALZEMELERİ A.Ş.",
-                yatirim_sektoru: "İMALAT - İnşaat Malzemeleri",
-                yatirim_cinsi: "YENİ YATIRIM",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "7,100,000 TL",
-                belge_durumu: "KAPALI"
-            }
-        ];
-
-        let filteredData = allData;
+        let filteredData = [];
 
         // Sayfa yüklendiğinde
         window.onload = function() {
+            // allData artık all_companies.js'den yükleniyor
+            filteredData = allData;
             updateStats();
-            displayResults(allData); // TÜM firmaları göster
+            displayResults(allData.slice(0, 50)); // İlk 50 kaydı göster
+            document.getElementById('loadingOverlay').style.display = 'none';
         };
 
         // İstatistikleri güncelle
@@ -419,8 +208,8 @@
             
             setTimeout(() => {
                 if (!query) {
-                    // Boş arama yapılırsa TÜM kayıtları göster
-                    filteredData = allData;
+                    // Boş arama yapılırsa ilk 50 kaydı göster
+                    filteredData = allData.slice(0, 50);
                 } else {
                     // Arama yapılırsa filtrele
                     filteredData = allData.filter(item => 
@@ -434,7 +223,7 @@
                     );
                 }
                 
-                displayResults(filteredData);
+                displayResults(filteredData.slice(0, 100)); // Maksimum 100 sonuç göster
             }, 300);
         }
 

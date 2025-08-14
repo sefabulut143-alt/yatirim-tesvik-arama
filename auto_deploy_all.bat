@@ -170,3 +170,4 @@ echo 3. Sonuclari gorun
 echo 4. Mobil cihazlarda PWA olarak indirin
 echo.
 pause
+

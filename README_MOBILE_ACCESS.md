@@ -196,3 +196,4 @@ cloudflared.exe tunnel --url http://localhost:5000 --logfile cloudflared.log
 ---
 
 **Not**: Bu rehber WiFi gerektirmeyen mobil erişim seçeneklerini kapsar. Her seçenek kendi avantajlarına sahiptir.
+

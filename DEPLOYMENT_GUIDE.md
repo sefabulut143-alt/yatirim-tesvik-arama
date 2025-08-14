@@ -171,3 +171,4 @@ Cloud deployment ile:
 - **Güvenli ve hızlı kullanım yapabilirsiniz**
 
 **Not**: Tüm dosyalar hazır! Sadece GitHub'a yükleyip Railway'de deploy edin.
+

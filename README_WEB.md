@@ -158,3 +158,4 @@ CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
 ---
 
 **Not**: Bu uygulama orijinal desktop uygulamasının mobil uyumlu web versiyonudur. Aynı veri setini kullanır ancak modern web teknolojileri ile geliştirilmiştir.
+

@@ -37,3 +37,4 @@ def split_json_file():
 
 if __name__ == "__main__":
     split_json_file()
+

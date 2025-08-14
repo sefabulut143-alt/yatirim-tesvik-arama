@@ -14,3 +14,4 @@ EXPOSE 5000
 
 # Uygulamayı başlat
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+
