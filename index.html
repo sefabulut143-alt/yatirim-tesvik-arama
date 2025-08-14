@@ -39,15 +39,6 @@
             flex: 1;
             margin-left: 20px;
         }
-        .logo {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
-            background: white;
-            border-radius: 8px;
-            padding: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
@@ -75,23 +66,6 @@
     <!-- Header -->
     <header class="search-container text-white py-8">
         <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center space-x-4">
-                    <img src="by bulut.png" alt="By Bulut" class="logo">
-                    <div>
-                        <h1 class="text-2xl font-bold">By Bulut</h1>
-                        <p class="text-sm opacity-80">Teknoloji</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <p class="text-sm opacity-80">7/24 Erişim</p>
-                        <p class="text-sm opacity-80">Mobil Uyumlu</p>
-                    </div>
-                    <img src="atlas_nestor_logo.png" alt="Atlas Nestor" class="logo">
-                </div>
-            </div>
-            
             <div class="text-center">
                 <h2 class="text-4xl font-bold mb-4">
                     <i class="fas fa-search mr-3"></i>
@@ -121,17 +95,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-building text-3xl text-blue-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalCompanies">105,778+</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCompanies">15</h3>
                 <p class="text-gray-600">Firma</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-map-marker-alt text-3xl text-green-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalCities">82</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCities">12</h3>
                 <p class="text-gray-600">İl</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-industry text-3xl text-purple-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800" id="totalSectors">547</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalSectors">13</h3>
                 <p class="text-gray-600">Sektör</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
@@ -425,7 +399,7 @@
         // Sayfa yüklendiğinde
         window.onload = function() {
             updateStats();
-            displayResults(allData.slice(0, 20)); // İlk 20 kaydı göster
+            displayResults(allData); // TÜM firmaları göster
         };
 
         // İstatistikleri güncelle
@@ -445,8 +419,8 @@
             
             setTimeout(() => {
                 if (!query) {
-                    // Boş arama yapılırsa ilk 20 kaydı göster
-                    filteredData = allData.slice(0, 20);
+                    // Boş arama yapılırsa TÜM kayıtları göster
+                    filteredData = allData;
                 } else {
                     // Arama yapılırsa filtrele
                     filteredData = allData.filter(item => 
