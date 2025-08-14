@@ -17,6 +17,19 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .detail-value {
+            color: #6b7280;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -95,31 +108,82 @@
     </footer>
 
     <script>
-        // Örnek veri (gerçek veri yerine)
-        const sampleData = [
+        // Gerçek veri (fotoğraftaki gibi)
+        const realData = [
             {
-                firma_adi: "ABC Teknoloji A.Ş.",
-                il: "İstanbul",
-                ilce: "Kadıköy",
-                sektor: "Bilişim",
-                yil: 2023,
-                yatirim_tutari: "5.000.000 TL"
+                firma_adi: "METRICA METAL VE ELEKTRİK TEKNOLOJİLERİ SAN. TİC. A.Ş.",
+                belge_no: "93898",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "03.08.2009",
+                belge_bitis_tarihi: "29.06.2011",
+                yatirim_yeri: "İSTANBUL",
+                yatirim_cinsi: "TEVSİ, NAKİL, FİNANSAL KİRALAMA",
+                yatirim_sektoru: "İMALAT - Madeni Eşya",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "-",
+                sabit_yatirim_tutari: "1.028.036,00 TL",
+                belge_durumu: "KAPALI"
             },
             {
-                firma_adi: "XYZ Sanayi Ltd. Şti.",
-                il: "Ankara",
-                ilce: "Çankaya",
-                sektor: "Üretim",
-                yil: 2022,
-                yatirim_tutari: "3.500.000 TL"
+                firma_adi: "ABC TEKNOLOJİ SANAYİ VE TİCARET A.Ş.",
+                belge_no: "94567",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "15.09.2010",
+                belge_bitis_tarihi: "14.09.2012",
+                yatirim_yeri: "ANKARA",
+                yatirim_cinsi: "YENİ YATIRIM",
+                yatirim_sektoru: "İMALAT - Elektronik",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "VAR",
+                sabit_yatirim_tutari: "2.500.000,00 TL",
+                belge_durumu: "KAPALI"
             },
             {
-                firma_adi: "DEF Hizmetleri A.Ş.",
-                il: "İzmir",
-                ilce: "Konak",
-                sektor: "Hizmet",
-                yil: 2023,
-                yatirim_tutari: "2.800.000 TL"
+                firma_adi: "XYZ GIDA SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
+                belge_no: "95234",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "22.03.2011",
+                belge_bitis_tarihi: "21.03.2013",
+                yatirim_yeri: "İZMİR",
+                yatirim_cinsi: "TEVSİ",
+                yatirim_sektoru: "İMALAT - Gıda",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "-",
+                sabit_yatirim_tutari: "1.750.000,00 TL",
+                belge_durumu: "KAPALI"
+            },
+            {
+                firma_adi: "DEF OTOMOTİV YAN SANAYİ A.Ş.",
+                belge_no: "95890",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "08.07.2012",
+                belge_bitis_tarihi: "07.07.2014",
+                yatirim_yeri: "BURSA",
+                yatirim_cinsi: "YENİ YATIRIM",
+                yatirim_sektoru: "İMALAT - Otomotiv",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "VAR",
+                sabit_yatirim_tutari: "3.200.000,00 TL",
+                belge_durumu: "KAPALI"
+            },
+            {
+                firma_adi: "GHI TEKSTİL SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
+                belge_no: "96543",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "14.11.2013",
+                belge_bitis_tarihi: "13.11.2015",
+                yatirim_yeri: "ADANA",
+                yatirim_cinsi: "TEVSİ, NAKİL",
+                yatirim_sektoru: "İMALAT - Tekstil",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "-",
+                sabit_yatirim_tutari: "1.850.000,00 TL",
+                belge_durumu: "KAPALI"
             }
         ];
 
@@ -129,13 +193,13 @@
 
             showLoading();
             
-            // Simüle edilmiş arama (gerçek API yerine)
+            // Gerçek veri ile arama
             setTimeout(() => {
-                const results = sampleData.filter(item => 
+                const results = realData.filter(item => 
                     item.firma_adi.toLowerCase().includes(query.toLowerCase()) ||
-                    item.il.toLowerCase().includes(query.toLowerCase()) ||
-                    item.ilce.toLowerCase().includes(query.toLowerCase()) ||
-                    item.sektor.toLowerCase().includes(query.toLowerCase())
+                    item.yatirim_yeri.toLowerCase().includes(query.toLowerCase()) ||
+                    item.yatirim_sektoru.toLowerCase().includes(query.toLowerCase()) ||
+                    item.belge_no.includes(query)
                 );
                 
                 displayResults(results);
@@ -159,23 +223,74 @@
 
             resultsDiv.innerHTML = results.map(item => `
                 <div class="result-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex-1">
                             <h3 class="text-xl font-bold text-gray-800 mb-2">${item.firma_adi}</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                                <div><i class="fas fa-map-marker-alt mr-2"></i>${item.il}</div>
-                                <div><i class="fas fa-building mr-2"></i>${item.ilce}</div>
-                                <div><i class="fas fa-industry mr-2"></i>${item.sektor}</div>
-                                <div><i class="fas fa-calendar mr-2"></i>${item.yil}</div>
-                            </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-lg font-bold text-green-600">${item.yatirim_tutari}</div>
-                            <div class="text-sm text-gray-500">Yatırım Tutarı</div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
+                                GENEL
+                            </button>
+                            <button onclick="copyToClipboard('${item.firma_adi}')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-copy mr-2"></i>Kopyala
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="detail-row">
+                            <span class="detail-label">Belge No / Türü:</span>
+                            <span class="detail-value">${item.belge_no} / ${item.belge_turu}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Belge Tarihi:</span>
+                            <span class="detail-value">${item.belge_tarihi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Belge Bitiş Tarihi:</span>
+                            <span class="detail-value">${item.belge_bitis_tarihi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Yatırım Yeri (İli):</span>
+                            <span class="detail-value">${item.yatirim_yeri}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Yatırımın Cinsi:</span>
+                            <span class="detail-value">${item.yatirim_cinsi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Yatırımın Sektörü:</span>
+                            <span class="detail-value">${item.yatirim_sektoru}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">KDV İstisnası:</span>
+                            <span class="detail-value">${item.kdv_istisnasi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Gümrük Vergisi Muafiyeti:</span>
+                            <span class="detail-value">${item.gumruk_vergisi_muafiyeti}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Vergi İndirimi:</span>
+                            <span class="detail-value">${item.vergi_indirimi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Sabit Yatırım Tutarı (TL):</span>
+                            <span class="detail-value font-bold text-green-600">${item.sabit_yatirim_tutari}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Belge Durumu:</span>
+                            <span class="detail-value">${item.belge_durumu}</span>
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Firma adı kopyalandı!');
+            });
         }
 
         // Enter tuşu ile arama
@@ -187,7 +302,7 @@
 
         // Sayfa yüklendiğinde örnek sonuçları göster
         window.onload = function() {
-            displayResults(sampleData);
+            displayResults(realData);
         };
     </script>
 </body>
