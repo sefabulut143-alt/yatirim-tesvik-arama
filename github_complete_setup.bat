@@ -24,7 +24,7 @@ echo.
 
 :: Git kullanıcı konfigürasyonu
 echo Git kullanici konfigurasyonu yapiliyor...
-git config --global user.name "sefabulut143"
+git config --global user.name "sefabulut143-alt"
 git config --global user.email "sefabulut143@gmail.com"
 
 echo.
@@ -33,7 +33,7 @@ echo   GITHUB'DA REPO OLUSTURUN
 echo ========================================
 echo.
 echo 1. https://github.com adresine gidin
-echo 2. Kullanici adi: sefabulut143
+echo 2. Kullanici adi: sefabulut143-alt
 echo 3. Sifre: rotseN062025!
 echo 4. Sag ustteki "+" butonuna tiklayin
 echo 5. "New repository" secin
@@ -80,7 +80,7 @@ if %errorlevel% neq 0 (
 
 :: Remote ekle
 echo Remote ekleniyor...
-git remote add origin https://github.com/sefabulut143/yatirim-tesvik-arama.git
+git remote add origin https://github.com/sefabulut143-alt/yatirim-tesvik-arama.git
 if %errorlevel% neq 0 (
     echo Remote ekleme hatasi! Repo olusturulmus mu kontrol edin.
     pause
@@ -91,7 +91,7 @@ if %errorlevel% neq 0 (
 echo GitHub'a yukleniyor...
 echo.
 echo GitHub kullanici adi ve sifrenizi girmeniz gerekebilir.
-echo Kullanici adi: sefabulut143
+echo Kullanici adi: sefabulut143-alt
 echo Sifre: rotseN062025!
 echo.
 git push -u origin main
@@ -108,14 +108,14 @@ echo ========================================
 echo.
 echo GitHub repo olusturuldu ve dosyalar yuklendi!
 echo.
-echo Repo URL: https://github.com/sefabulut143/yatirim-tesvik-arama
+echo Repo URL: https://github.com/sefabulut143-alt/yatirim-tesvik-arama
 echo.
 echo ========================================
 echo   SONRAKI ADIM: RAILWAY DEPLOY
 echo ========================================
 echo.
 echo 1. https://railway.app adresine gidin
-echo 2. GitHub hesabinizla giris yapin (sefabulut143)
+echo 2. GitHub hesabinizla giris yapin (sefabulut143-alt)
 echo 3. "Deploy from GitHub" secin
 echo 4. yatirim-tesvik-arama repo'sunu secin
 echo 5. Otomatik deploy baslar!
@@ -134,8 +134,8 @@ echo ========================================
 echo   REPO BILGILERI
 echo ========================================
 echo.
-echo Kullanici adi: sefabulut143
+echo Kullanici adi: sefabulut143-alt
 echo Repo adi: yatirim-tesvik-arama
-echo URL: https://github.com/sefabulut143/yatirim-tesvik-arama
+echo URL: https://github.com/sefabulut143-alt/yatirim-tesvik-arama
 echo.
 pause

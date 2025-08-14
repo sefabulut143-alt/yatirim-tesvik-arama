@@ -1,0 +1,50 @@
+MANUEL GITHUB PUSH KOMUTLARI
+========================================
+
+Sorun: "src refspec main does not match any" hatası
+Cozum: Branch adi sorunu - master branch'inde ama main'e push etmeye calisiyor
+
+ADIM ADIM COZUM:
+
+1. Git kullanici konfigurasyonu:
+git config --global user.name "sefabulut143-alt"
+git config --global user.email "sefabulut143@gmail.com"
+
+2. Mevcut branch'i kontrol et:
+git branch
+
+3. Master branch'ini main'e yeniden adlandir:
+git branch -M main
+
+4. Remote'u kontrol et:
+git remote -v
+
+5. Remote'u yeniden ekle:
+git remote remove origin
+git remote add origin https://github.com/sefabulut143-alt/yatirim-tesvik-arama.git
+
+6. Push et:
+git push -u origin main
+
+ALTERNATIF COZUM (eğer main çalışmazsa):
+git push -u origin master
+
+GITHUB BILGILERI:
+- Kullanici adi: sefabulut143-alt
+- Sifre: rotseN062025!
+- Repo adi: yatirim-tesvik-arama
+- URL: https://github.com/sefabulut143-alt/yatirim-tesvik-arama
+
+SONRAKI ADIM:
+1. https://railway.app adresine git
+2. GitHub hesabinla giris yap (sefabulut143-alt)
+3. "Deploy from GitHub" sec
+4. yatirim-tesvik-arama repo'sunu sec
+5. Otomatik deploy baslar!
+
+AVANTAJLAR:
+✅ 7/24 erisim
+✅ Bilgisayar acik kalmasina gerek yok
+✅ Global erisim
+✅ Otomatik SSL
+✅ Ucretsiz
