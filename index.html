@@ -40,16 +40,8 @@
             margin-left: 20px;
         }
         .logo {
-            width: 50px;
             height: 50px;
-            background: white;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #667eea;
-            font-size: 18px;
+            object-fit: contain;
         }
         .status-badge {
             padding: 4px 12px;
@@ -80,17 +72,18 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center space-x-4">
-                    <div class="logo">
-                        <i class="fas fa-cloud"></i>
-                    </div>
+                    <img src="by bulut.png" alt="By Bulut" class="logo">
                     <div>
-                        <h1 class="text-2xl font-bold">Bulut</h1>
+                        <h1 class="text-2xl font-bold">By Bulut</h1>
                         <p class="text-sm opacity-80">Teknoloji</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm opacity-80">7/24 Erişim</p>
-                    <p class="text-sm opacity-80">Mobil Uyumlu</p>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm opacity-80">7/24 Erişim</p>
+                        <p class="text-sm opacity-80">Mobil Uyumlu</p>
+                    </div>
+                    <img src="atlas_nestor_logo.png" alt="Atlas Nestor" class="logo">
                 </div>
             </div>
             
@@ -284,30 +277,79 @@
                 vergi_indirimi: "-",
                 sabit_yatirim_tutari: "2.800.000,00 TL",
                 belge_durumu: "KAPALI"
+            },
+            {
+                firma_adi: "JKL KİMYA SANAYİ VE TİCARET A.Ş.",
+                belge_no: "98567",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "12.09.2016",
+                belge_bitis_tarihi: "11.09.2018",
+                yatirim_yeri: "KOCAELİ",
+                yatirim_cinsi: "YENİ YATIRIM",
+                yatirim_sektoru: "İMALAT - Kimya",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "VAR",
+                sabit_yatirim_tutari: "5.200.000,00 TL",
+                belge_durumu: "KAPALI"
+            },
+            {
+                firma_adi: "MNO PLASTİK SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
+                belge_no: "99234",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "25.11.2017",
+                belge_bitis_tarihi: "24.11.2019",
+                yatirim_yeri: "ANTALYA",
+                yatirim_cinsi: "TEVSİ",
+                yatirim_sektoru: "İMALAT - Plastik",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "-",
+                sabit_yatirim_tutari: "2.100.000,00 TL",
+                belge_durumu: "KAPALI"
+            },
+            {
+                firma_adi: "PQR MAKİNE SANAYİ VE TİCARET A.Ş.",
+                belge_no: "99901",
+                belge_turu: "Yerli Sermaye",
+                belge_tarihi: "08.03.2018",
+                belge_bitis_tarihi: "07.03.2020",
+                yatirim_yeri: "ESKİŞEHİR",
+                yatirim_cinsi: "YENİ YATIRIM",
+                yatirim_sektoru: "İMALAT - Makine",
+                kdv_istisnasi: "VAR",
+                gumruk_vergisi_muafiyeti: "VAR",
+                vergi_indirimi: "VAR",
+                sabit_yatirim_tutari: "3.800.000,00 TL",
+                belge_durumu: "KAPALI"
             }
         ];
 
         function search() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query) {
-                displayResults(realData);
-                return;
-            }
-
+            
             showLoading();
             
             // Gerçek veri ile arama
             setTimeout(() => {
-                const results = realData.filter(item => 
-                    item.firma_adi.toLowerCase().includes(query.toLowerCase()) ||
-                    item.yatirim_yeri.toLowerCase().includes(query.toLowerCase()) ||
-                    item.yatirim_sektoru.toLowerCase().includes(query.toLowerCase()) ||
-                    item.belge_no.includes(query) ||
-                    item.belge_turu.toLowerCase().includes(query.toLowerCase())
-                );
+                let results;
+                if (!query) {
+                    // Boş arama yapılırsa tüm firmaları göster
+                    results = realData;
+                } else {
+                    // Arama yapılırsa filtrele
+                    results = realData.filter(item => 
+                        item.firma_adi.toLowerCase().includes(query.toLowerCase()) ||
+                        item.yatirim_yeri.toLowerCase().includes(query.toLowerCase()) ||
+                        item.yatirim_sektoru.toLowerCase().includes(query.toLowerCase()) ||
+                        item.belge_no.includes(query) ||
+                        item.belge_turu.toLowerCase().includes(query.toLowerCase()) ||
+                        item.yatirim_cinsi.toLowerCase().includes(query.toLowerCase())
+                    );
+                }
                 
                 displayResults(results);
-            }, 500);
+            }, 300);
         }
 
         function showLoading() {
@@ -452,7 +494,7 @@ Belge Durumu: ${item.belge_durumu}
             }
         });
 
-        // Sayfa yüklendiğinde örnek sonuçları göster
+        // Sayfa yüklendiğinde tüm firmaları göster
         window.onload = function() {
             displayResults(realData);
         };
