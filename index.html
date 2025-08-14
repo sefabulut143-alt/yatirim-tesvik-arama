@@ -40,8 +40,12 @@
             margin-left: 20px;
         }
         .logo {
-            height: 50px;
+            height: 60px;
+            width: auto;
             object-fit: contain;
+            background: white;
+            border-radius: 8px;
+            padding: 4px;
         }
         .status-badge {
             padding: 4px 12px;
@@ -64,9 +68,36 @@
             border-radius: 8px;
             font-weight: bold;
         }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Veriler Yükleniyor</h3>
+            <p class="text-gray-600">105,778 adet yatırım teşvik belgesi yükleniyor...</p>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="search-container text-white py-8">
         <div class="container mx-auto px-4">
@@ -116,17 +147,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-building text-3xl text-blue-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800">50,000+</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCompanies">105,778+</h3>
                 <p class="text-gray-600">Firma</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-map-marker-alt text-3xl text-green-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800">81</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCities">81</h3>
                 <p class="text-gray-600">İl</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
                 <i class="fas fa-industry text-3xl text-purple-600 mb-3"></i>
-                <h3 class="text-2xl font-bold text-gray-800">100+</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalSectors">100+</h3>
                 <p class="text-gray-600">Sektör</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6 text-center">
@@ -171,184 +202,132 @@
     </footer>
 
     <script>
-        // Gerçek veri (fotoğraftaki gibi)
-        const realData = [
-            {
-                firma_adi: "METRICA METAL VE ELEKTRİK TEKNOLOJİLERİ SAN. TİC. A.Ş.",
-                belge_no: "93898",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "03.08.2009",
-                belge_bitis_tarihi: "29.06.2011",
-                yatirim_yeri: "İSTANBUL",
-                yatirim_cinsi: "TEVSİ, NAKİL, FİNANSAL KİRALAMA",
-                yatirim_sektoru: "İMALAT - Madeni Eşya",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1.028.036,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "ABC TEKNOLOJİ SANAYİ VE TİCARET A.Ş.",
-                belge_no: "94567",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "15.09.2010",
-                belge_bitis_tarihi: "14.09.2012",
-                yatirim_yeri: "ANKARA",
-                yatirim_cinsi: "YENİ YATIRIM",
-                yatirim_sektoru: "İMALAT - Elektronik",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "2.500.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "XYZ GIDA SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                belge_no: "95234",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "22.03.2011",
-                belge_bitis_tarihi: "21.03.2013",
-                yatirim_yeri: "İZMİR",
-                yatirim_cinsi: "TEVSİ",
-                yatirim_sektoru: "İMALAT - Gıda",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1.750.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "DEF OTOMOTİV YAN SANAYİ A.Ş.",
-                belge_no: "95890",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "08.07.2012",
-                belge_bitis_tarihi: "07.07.2014",
-                yatirim_yeri: "BURSA",
-                yatirim_cinsi: "YENİ YATIRIM",
-                yatirim_sektoru: "İMALAT - Otomotiv",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "3.200.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "GHI TEKSTİL SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                belge_no: "96543",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "14.11.2013",
-                belge_bitis_tarihi: "13.11.2015",
-                yatirim_yeri: "ADANA",
-                yatirim_cinsi: "TEVSİ, NAKİL",
-                yatirim_sektoru: "İMALAT - Tekstil",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "1.850.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "BERAT TEKNOLOJİ VE YAZILIM A.Ş.",
-                belge_no: "97123",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "05.03.2014",
-                belge_bitis_tarihi: "04.03.2016",
-                yatirim_yeri: "İSTANBUL",
-                yatirim_cinsi: "YENİ YATIRIM",
-                yatirim_sektoru: "İMALAT - Yazılım",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "4.500.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "BERAT ENERJİ SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                belge_no: "97890",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "18.07.2015",
-                belge_bitis_tarihi: "17.07.2017",
-                yatirim_yeri: "ANKARA",
-                yatirim_cinsi: "TEVSİ",
-                yatirim_sektoru: "İMALAT - Enerji",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "2.800.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "JKL KİMYA SANAYİ VE TİCARET A.Ş.",
-                belge_no: "98567",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "12.09.2016",
-                belge_bitis_tarihi: "11.09.2018",
-                yatirim_yeri: "KOCAELİ",
-                yatirim_cinsi: "YENİ YATIRIM",
-                yatirim_sektoru: "İMALAT - Kimya",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "5.200.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "MNO PLASTİK SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-                belge_no: "99234",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "25.11.2017",
-                belge_bitis_tarihi: "24.11.2019",
-                yatirim_yeri: "ANTALYA",
-                yatirim_cinsi: "TEVSİ",
-                yatirim_sektoru: "İMALAT - Plastik",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "-",
-                sabit_yatirim_tutari: "2.100.000,00 TL",
-                belge_durumu: "KAPALI"
-            },
-            {
-                firma_adi: "PQR MAKİNE SANAYİ VE TİCARET A.Ş.",
-                belge_no: "99901",
-                belge_turu: "Yerli Sermaye",
-                belge_tarihi: "08.03.2018",
-                belge_bitis_tarihi: "07.03.2020",
-                yatirim_yeri: "ESKİŞEHİR",
-                yatirim_cinsi: "YENİ YATIRIM",
-                yatirim_sektoru: "İMALAT - Makine",
-                kdv_istisnasi: "VAR",
-                gumruk_vergisi_muafiyeti: "VAR",
-                vergi_indirimi: "VAR",
-                sabit_yatirim_tutari: "3.800.000,00 TL",
-                belge_durumu: "KAPALI"
+        let allData = [];
+        let filteredData = [];
+
+        // Sayfa yüklendiğinde verileri yükle
+        window.onload = function() {
+            loadData();
+        };
+
+        // Verileri yükle
+        async function loadData() {
+            try {
+                const response = await fetch('/api/data');
+                if (response.ok) {
+                    allData = await response.json();
+                    filteredData = allData;
+                    
+                    // İstatistikleri güncelle
+                    updateStats();
+                    
+                    // İlk 20 kaydı göster
+                    displayResults(allData.slice(0, 20));
+                    
+                    // Loading overlay'i kaldır
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                } else {
+                    // API çalışmıyorsa örnek verilerle devam et
+                    loadSampleData();
+                }
+            } catch (error) {
+                console.log('API hatası, örnek veriler yükleniyor...');
+                loadSampleData();
             }
-        ];
+        }
+
+        // Örnek veriler (API çalışmazsa)
+        function loadSampleData() {
+            allData = [
+                {
+                    belge_no: "93898",
+                    belge_turu: "Yerli Sermaye",
+                    belge_tarihi: "03.08.2009",
+                    belge_bitis_tarihi: "29.06.2011",
+                    yatirim_yeri: "İSTANBUL",
+                    yatirim_ilce: "Esenyurt",
+                    firma_adi: "METRICA METAL VE ELEKTRİK TEKNOLOJİLERİ SAN. TİC. A.Ş.",
+                    yatirim_sektoru: "İMALAT - Madeni Eşya",
+                    yatirim_cinsi: "TEVSİ, NAKİL, FİNANSAL KİRALAMA",
+                    kdv_istisnasi: "VAR",
+                    gumruk_vergisi_muafiyeti: "VAR",
+                    vergi_indirimi: "-",
+                    sabit_yatirim_tutari: "1.028.036,00 TL",
+                    belge_durumu: "KAPALI"
+                },
+                {
+                    belge_no: "93897",
+                    belge_turu: "Yerli Sermaye",
+                    belge_tarihi: "03.08.2009",
+                    belge_bitis_tarihi: "01.02.2011",
+                    yatirim_yeri: "BURSA",
+                    yatirim_ilce: "Osmangazi",
+                    firma_adi: "ADAL TEKSTİL KONFEKSİYON SAN. VE TİC. LTD. ŞTİ.",
+                    yatirim_sektoru: "İMALAT - Dokuma ve Giyim",
+                    yatirim_cinsi: "TEVSİ",
+                    kdv_istisnasi: "VAR",
+                    gumruk_vergisi_muafiyeti: "VAR",
+                    vergi_indirimi: "-",
+                    sabit_yatirim_tutari: "1.744.527,00 TL",
+                    belge_durumu: "KAPALI"
+                },
+                {
+                    belge_no: "93908",
+                    belge_turu: "Yerli Sermaye",
+                    belge_tarihi: "04.08.2009",
+                    belge_bitis_tarihi: "08.07.2011",
+                    yatirim_yeri: "IĞDIR",
+                    yatirim_ilce: "Merkez",
+                    firma_adi: "ARAS OTOMOTİV ANTREPOCULUK LOJİSTİK DEPOLAMA PETROL VE MADEN İŞLETMECİLİĞİ TİC. LTD. ŞTİ.",
+                    yatirim_sektoru: "İMALAT - Lastik-Plastik",
+                    yatirim_cinsi: "KOMPLE YENİ YATIRIM",
+                    kdv_istisnasi: "VAR",
+                    gumruk_vergisi_muafiyeti: "-",
+                    vergi_indirimi: "Faiz Desteği",
+                    sabit_yatirim_tutari: "506.034,00 TL",
+                    belge_durumu: "KAPALI"
+                }
+            ];
+            
+            filteredData = allData;
+            updateStats();
+            displayResults(allData);
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // İstatistikleri güncelle
+        function updateStats() {
+            const uniqueCities = [...new Set(allData.map(item => item.yatirim_yeri))].length;
+            const uniqueSectors = [...new Set(allData.map(item => item.yatirim_sektoru))].length;
+            
+            document.getElementById('totalCompanies').textContent = allData.length.toLocaleString();
+            document.getElementById('totalCities').textContent = uniqueCities;
+            document.getElementById('totalSectors').textContent = uniqueSectors;
+        }
 
         function search() {
             const query = document.getElementById('searchInput').value.trim();
             
             showLoading();
             
-            // Gerçek veri ile arama
             setTimeout(() => {
-                let results;
                 if (!query) {
-                    // Boş arama yapılırsa tüm firmaları göster
-                    results = realData;
+                    // Boş arama yapılırsa ilk 50 kaydı göster
+                    filteredData = allData.slice(0, 50);
                 } else {
                     // Arama yapılırsa filtrele
-                    results = realData.filter(item => 
-                        item.firma_adi.toLowerCase().includes(query.toLowerCase()) ||
-                        item.yatirim_yeri.toLowerCase().includes(query.toLowerCase()) ||
-                        item.yatirim_sektoru.toLowerCase().includes(query.toLowerCase()) ||
-                        item.belge_no.includes(query) ||
-                        item.belge_turu.toLowerCase().includes(query.toLowerCase()) ||
-                        item.yatirim_cinsi.toLowerCase().includes(query.toLowerCase())
+                    filteredData = allData.filter(item => 
+                        (item.firma_adi && item.firma_adi.toLowerCase().includes(query.toLowerCase())) ||
+                        (item.yatirim_yeri && item.yatirim_yeri.toLowerCase().includes(query.toLowerCase())) ||
+                        (item.yatirim_ilce && item.yatirim_ilce.toLowerCase().includes(query.toLowerCase())) ||
+                        (item.yatirim_sektoru && item.yatirim_sektoru.toLowerCase().includes(query.toLowerCase())) ||
+                        (item.belge_no && item.belge_no.includes(query)) ||
+                        (item.belge_turu && item.belge_turu.toLowerCase().includes(query.toLowerCase())) ||
+                        (item.yatirim_cinsi && item.yatirim_cinsi.toLowerCase().includes(query.toLowerCase()))
                     );
                 }
                 
-                displayResults(results);
+                displayResults(filteredData.slice(0, 50)); // Maksimum 50 sonuç göster
             }, 300);
         }
 
@@ -372,17 +351,18 @@
             }
 
             // Sonuç sayısını göster
-            countTextDiv.textContent = `${results.length} adet yatırım teşvik belgesi bulundu`;
+            const totalCount = filteredData.length;
+            countTextDiv.textContent = `${results.length} adet sonuç gösteriliyor (Toplam: ${totalCount} adet)`;
             resultsCountDiv.classList.remove('hidden');
             
             resultsDiv.innerHTML = results.map((item, index) => `
                 <div class="result-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex-1">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">${item.firma_adi}</h3>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">${item.firma_adi || 'Firma adı belirtilmemiş'}</h3>
                             <div class="flex items-center space-x-4">
-                                <span class="text-sm text-gray-500">Belge No: ${item.belge_no}</span>
-                                <span class="status-badge ${item.belge_durumu === 'KAPALI' ? 'status-closed' : 'status-active'}">${item.belge_durumu}</span>
+                                <span class="text-sm text-gray-500">Belge No: ${item.belge_no || 'Belirtilmemiş'}</span>
+                                <span class="status-badge ${(item.belge_durumu === 'KAPALI') ? 'status-closed' : 'status-active'}">${item.belge_durumu || 'Belirtilmemiş'}</span>
                             </div>
                         </div>
                         <div class="flex space-x-2">
@@ -400,49 +380,49 @@
                             <div class="space-y-3">
                                 <div class="detail-row">
                                     <span class="detail-label">Belge No / Türü:</span>
-                                    <span class="detail-value">${item.belge_no} / ${item.belge_turu}</span>
+                                    <span class="detail-value">${item.belge_no || '-'} / ${item.belge_turu || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Belge Tarihi:</span>
-                                    <span class="detail-value">${item.belge_tarihi}</span>
+                                    <span class="detail-value">${item.belge_tarihi || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Belge Bitiş Tarihi:</span>
-                                    <span class="detail-value">${item.belge_bitis_tarihi}</span>
+                                    <span class="detail-value">${item.belge_bitis_tarihi || '-'}</span>
                                 </div>
                                 <div class="detail-row">
-                                    <span class="detail-label">Yatırım Yeri (İli):</span>
-                                    <span class="detail-value">${item.yatirim_yeri}</span>
+                                    <span class="detail-label">Yatırım Yeri:</span>
+                                    <span class="detail-value">${item.yatirim_yeri || '-'} ${item.yatirim_ilce ? `(${item.yatirim_ilce})` : ''}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Yatırımın Cinsi:</span>
-                                    <span class="detail-value">${item.yatirim_cinsi}</span>
+                                    <span class="detail-value">${item.yatirim_cinsi || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Yatırımın Sektörü:</span>
-                                    <span class="detail-value">${item.yatirim_sektoru}</span>
+                                    <span class="detail-value">${item.yatirim_sektoru || '-'}</span>
                                 </div>
                             </div>
                             <div class="space-y-3">
                                 <div class="detail-row">
                                     <span class="detail-label">KDV İstisnası:</span>
-                                    <span class="detail-value">${item.kdv_istisnasi}</span>
+                                    <span class="detail-value">${item.kdv_istisnasi || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Gümrük Vergisi Muafiyeti:</span>
-                                    <span class="detail-value">${item.gumruk_vergisi_muafiyeti}</span>
+                                    <span class="detail-value">${item.gumruk_vergisi_muafiyeti || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Vergi İndirimi:</span>
-                                    <span class="detail-value">${item.vergi_indirimi}</span>
+                                    <span class="detail-value">${item.vergi_indirimi || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Sabit Yatırım Tutarı:</span>
-                                    <span class="amount-highlight">${item.sabit_yatirim_tutari}</span>
+                                    <span class="amount-highlight">${item.sabit_yatirim_tutari || '-'}</span>
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">Belge Durumu:</span>
-                                    <span class="detail-value">${item.belge_durumu}</span>
+                                    <span class="detail-value">${item.belge_durumu || '-'}</span>
                                 </div>
                             </div>
                         </div>
@@ -452,23 +432,23 @@
         }
 
         function copyToClipboard(index) {
-            const item = realData[index];
+            const item = filteredData[index];
             const copyText = `
 YATIRIM TEŞVİK BELGESİ BİLGİLERİ
 
-Firma Adı: ${item.firma_adi}
-Belge No: ${item.belge_no}
-Belge Türü: ${item.belge_turu}
-Belge Tarihi: ${item.belge_tarihi}
-Belge Bitiş Tarihi: ${item.belge_bitis_tarihi}
-Yatırım Yeri: ${item.yatirim_yeri}
-Yatırımın Cinsi: ${item.yatirim_cinsi}
-Yatırımın Sektörü: ${item.yatirim_sektoru}
-KDV İstisnası: ${item.kdv_istisnasi}
-Gümrük Vergisi Muafiyeti: ${item.gumruk_vergisi_muafiyeti}
-Vergi İndirimi: ${item.vergi_indirimi}
-Sabit Yatırım Tutarı: ${item.sabit_yatirim_tutari}
-Belge Durumu: ${item.belge_durumu}
+Firma Adı: ${item.firma_adi || 'Belirtilmemiş'}
+Belge No: ${item.belge_no || 'Belirtilmemiş'}
+Belge Türü: ${item.belge_turu || 'Belirtilmemiş'}
+Belge Tarihi: ${item.belge_tarihi || 'Belirtilmemiş'}
+Belge Bitiş Tarihi: ${item.belge_bitis_tarihi || 'Belirtilmemiş'}
+Yatırım Yeri: ${item.yatirim_yeri || 'Belirtilmemiş'} ${item.yatirim_ilce ? `(${item.yatirim_ilce})` : ''}
+Yatırımın Cinsi: ${item.yatirim_cinsi || 'Belirtilmemiş'}
+Yatırımın Sektörü: ${item.yatirim_sektoru || 'Belirtilmemiş'}
+KDV İstisnası: ${item.kdv_istisnasi || 'Belirtilmemiş'}
+Gümrük Vergisi Muafiyeti: ${item.gumruk_vergisi_muafiyeti || 'Belirtilmemiş'}
+Vergi İndirimi: ${item.vergi_indirimi || 'Belirtilmemiş'}
+Sabit Yatırım Tutarı: ${item.sabit_yatirim_tutari || 'Belirtilmemiş'}
+Belge Durumu: ${item.belge_durumu || 'Belirtilmemiş'}
             `.trim();
 
             navigator.clipboard.writeText(copyText).then(() => {
@@ -493,11 +473,6 @@ Belge Durumu: ${item.belge_durumu}
                 search();
             }
         });
-
-        // Sayfa yüklendiğinde tüm firmaları göster
-        window.onload = function() {
-            displayResults(realData);
-        };
     </script>
 </body>
 </html>
