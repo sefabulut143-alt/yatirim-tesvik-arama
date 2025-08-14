@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yatırım Teşvik Belgesi Arama</title>
+    <meta name="description" content="Yatırım Teşvik Belgesi arama uygulaması - Mobil uyumlu">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="YTB Arama">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Loading animation */
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .search-container {
+                padding: 1rem;
+            }
+            .result-card {
+                margin: 0.5rem 0;
+            }
+            .search-input {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .main-content {
+                padding: 1rem;
+            }
+        }
+        
+        /* Touch optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            button, .result-card {
+                min-height: 44px; /* Apple's recommended touch target size */
+            }
+            input {
+                min-height: 44px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .dark-mode {
+                background-color: #1e293b;
+                color: #f1f5f9;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <img src="/static/logo.png" alt="Logo" class="h-8 w-8" onerror="this.style.display='none'">
+                    <div>
+                        <h1 class="header-title text-xl font-bold text-gray-900">Yatırım Teşvik Belgesi</h1>
+                        <p class="text-sm text-gray-500">Arama Uygulaması</p>
+                    </div>
+                </div>
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-moon text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Search Section -->
+        <div class="search-container bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Firma Arama</h2>
+                <p class="text-gray-600">Firma adını yazarak yatırım teşvik belgelerini arayın</p>
+            </div>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Firma adını girin (örn: ABC Şirketi)"
+                        class="search-input w-full px-4 py-3 pl-12 pr-16 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        autocomplete="off"
+                        inputmode="text"
+                    >
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button 
+                        id="searchBtn" 
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-sm text-gray-500 text-center">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    En az 2 karakter yazın
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div id="statsSection" class="bg-white rounded-xl shadow-lg p-6 mb-8 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600" id="totalRecords">-</div>
+                    <div class="text-sm text-gray-600">Toplam Kayıt</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600" id="lastUpdated">-</div>
+                    <div class="text-sm text-gray-600">Son Güncelleme</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Arama Sonuçları</h3>
+                <div class="text-sm text-gray-500">
+                    <span id="resultCount">0</span> sonuç bulundu
+                </div>
+            </div>
+            
+            <div id="resultsContainer" class="space-y-4">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loadingSection" class="hidden text-center py-12">
+            <div class="loading inline-block">
+                <i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i>
+            </div>
+            <p class="mt-4 text-gray-600">Aranıyor...</p>
+        </div>
+
+        <!-- No Results Section -->
+        <div id="noResultsSection" class="hidden text-center py-12">
+            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Sonuç Bulunamadı</h3>
+            <p class="text-gray-600">Arama kriterlerinizi değiştirmeyi deneyin</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-gray-500 text-sm">
+                <p>© 2024 Atlas Nestor Danışmanlık - Tüm hakları saklıdır</p>
+                <p class="mt-1">Mobil uyumlu web uygulaması</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let searchTimeout;
+        let currentResults = [];
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const noResultsSection = document.getElementById('noResultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultCount = document.getElementById('resultCount');
+        const statsSection = document.getElementById('statsSection');
+        const totalRecords = document.getElementById('totalRecords');
+        const lastUpdated = document.getElementById('lastUpdated');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            setupEventListeners();
+            setupTheme();
+        });
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                totalRecords.textContent = data.total_records.toLocaleString();
+                lastUpdated.textContent = data.last_updated;
+                statsSection.classList.remove('hidden');
+            } catch (error) {
+                console.error('Stats yüklenemedi:', error);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => performSearch(query), 300);
+                } else {
+                    hideResults();
+                }
+            });
+
+            // Search button
+            searchBtn.addEventListener('click', function() {
+                const query = searchInput.value.trim();
+                if (query.length >= 2) {
+                    performSearch(query);
+                }
+            });
+
+            // Enter key
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query.length >= 2) {
+                        performSearch(query);
+                    }
+                }
+            });
+
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Mobile optimizations
+            if ('ontouchstart' in window) {
+                // Touch device optimizations
+                searchInput.addEventListener('focus', function() {
+                    // Scroll to input on mobile
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+                
+                // Prevent zoom on input focus (iOS)
+                searchInput.addEventListener('focus', function() {
+                    document.body.style.fontSize = '16px';
+                });
+                
+                searchInput.addEventListener('blur', function() {
+                    document.body.style.fontSize = '';
+                });
+            }
+        }
+
+        // Perform search
+        async function performSearch(query) {
+            showLoading();
+            
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                currentResults = data.results || [];
+                displayResults(currentResults, data.count);
+            } catch (error) {
+                console.error('Arama hatası:', error);
+                showError('Arama sırasında bir hata oluştu');
+            }
+        }
+
+        // Display results
+        function displayResults(results, count) {
+            hideLoading();
+            
+            if (count === 0) {
+                showNoResults();
+                return;
+            }
+
+            resultCount.textContent = count;
+            resultsContainer.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const card = createResultCard(result, index);
+                resultsContainer.appendChild(card);
+            });
+
+            resultsSection.classList.remove('hidden');
+            noResultsSection.classList.add('hidden');
+        }
+
+        // Create result card
+        function createResultCard(result, index) {
+            const card = document.createElement('div');
+            card.className = 'result-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer';
+            
+            // Get the most relevant fields
+            const fields = Object.keys(result);
+            const displayFields = fields.slice(0, 6); // Show first 6 fields
+            
+            let cardContent = `
+                <div class="flex justify-between items-start mb-3">
+                    <h4 class="text-lg font-semibold text-gray-900">Sonuç ${index + 1}</h4>
+                    <button onclick="copyToClipboard(${index})" class="text-blue-600 hover:text-blue-800 transition-colors">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="space-y-2">
+            `;
+            
+            displayFields.forEach(field => {
+                if (result[field] && result[field].trim()) {
+                    cardContent += `
+                        <div class="flex">
+                            <span class="font-medium text-gray-700 min-w-[120px]">${field}:</span>
+                            <span class="text-gray-900">${result[field]}</span>
+                        </div>
+                    `;
+                }
+            });
+            
+            cardContent += '</div>';
+            card.innerHTML = cardContent;
+            
+            return card;
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(index) {
+            const result = currentResults[index];
+            const text = Object.entries(result)
+                .filter(([key, value]) => value && value.trim())
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n');
+            
+            // Mobile-friendly clipboard copy
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Kopyalandı!');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+        
+        // Fallback copy method for older browsers/mobile
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('Kopyalandı!');
+            } catch (err) {
+                showToast('Kopyalama başarısız');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Show/hide functions
+        function showLoading() {
+            loadingSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            noResultsSection.classList.add('hidden');
+        }
+
+        function hideLoading() {
+            loadingSection.classList.add('hidden');
+        }
+
+        function hideResults() {
+            resultsSection.classList.add('hidden');
+            noResultsSection.classList.add('hidden');
+        }
+
+        function showNoResults() {
+            noResultsSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+        }
+
+        function showError(message) {
+            hideLoading();
+            showToast(message);
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 left-4 right-4 md:left-auto md:right-4 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg z-50 text-center md:text-left';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Add animation
+            toast.style.transform = 'translateY(100px)';
+            toast.style.opacity = '0';
+            toast.style.transition = 'all 0.3s ease';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 10);
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Theme management
+        function setupTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+                updateThemeIcon();
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const icon = themeToggle.querySelector('i');
+            if (document.documentElement.classList.contains('dark')) {
+                icon.className = 'fas fa-sun text-yellow-500';
+            } else {
+                icon.className = 'fas fa-moon text-gray-600';
+            }
+        }
+
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
